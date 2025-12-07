@@ -1,0 +1,30 @@
+[
+  {
+    "fullName": "Ахмедов Нурлан",
+    "phone": "+77076652345",
+    "email": "gfr.e@gmail.com",
+    "notes": "",
+    "id": "0d803b0c-3f13-4293-becb-453cb6dcf37b"
+  },
+  {
+    "fullName": "Звездочкин Максим",
+    "phone": "+77078883412",
+    "email": "sdg@gmail.com",
+    "notes": "",
+    "id": "cfe09994-7574-4c50-bbfd-2a9ac13f665a"
+  },
+  {
+    "fullName": "Чичиков Анатолий",
+    "phone": "+77074459823",
+    "email": "dgsf@gmail.com",
+    "notes": "",
+    "id": "3e72e06b-db00-4d48-b1ba-1c76d7f2e906"
+  },
+  {
+    "fullName": "Исаева Динара Абзалкызы",
+    "phone": "+77772233467",
+    "email": "dinara_aisa@mail.kz",
+    "notes": "Частые командировки",
+    "id": "11db742a-2cf6-4428-b83d-b9204c74bade"
+  }
+]

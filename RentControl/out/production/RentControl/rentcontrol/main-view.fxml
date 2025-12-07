@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="rentcontrol.MainController"
+            prefWidth="1740" prefHeight="768"
+            styleClass="root-pane">
+
+    <!-- ЛЕВОЕ МЕНЮ -->
+    <left>
+        <VBox spacing="24" styleClass="sidebar">
+            <padding>
+                <Insets top="32" right="32" bottom="32" left="32"/>
+            </padding>
+
+            <children>
+
+                <Label text="RentControl" styleClass="app-title"/>
+
+                <VBox spacing="12">
+
+                    <HBox fx:id="menuTenants" spacing="8" styleClass="menu-item" onMouseClicked="#openTenants">
+                        <Label text="Арендаторы"/>
+                    </HBox>
+
+                    <HBox fx:id="menuLandlords" spacing="8" styleClass="menu-item" onMouseClicked="#openLandlords">
+                        <Label text="Арендодатели"/>
+                    </HBox>
+
+                    <HBox fx:id="menuProperties" spacing="8" styleClass="menu-item" onMouseClicked="#openProperties">
+                        <Label text="Объекты"/>
+                    </HBox>
+
+                    <HBox fx:id="menuContracts" spacing="8" styleClass="menu-item" onMouseClicked="#openContracts">
+                        <Label text="Договоры"/>
+                    </HBox>
+
+                    <HBox fx:id="menuPayments" spacing="8" styleClass="menu-item" onMouseClicked="#openPayments">
+                        <Label text="Платежи"/>
+                    </HBox>
+
+                    <HBox fx:id="menuCalculator" spacing="8" styleClass="menu-item" onMouseClicked="#openCalculator">
+                        <Label text="Расчёт платежей"/>
+                    </HBox>
+
+                </VBox>
+
+            </children>
+        </VBox>
+    </left>
+
+    <!-- ВЕРХНЯЯ ПАНЕЛЬ -->
+    <top>
+        <HBox alignment="CENTER_RIGHT">
+            <padding>
+                <Insets top="16" right="32" bottom="0" left="0"/>
+            </padding>
+            <children>
+                <Button text="Обновить"
+                        onAction="#onRefresh"
+                        styleClass="secondary-button"/>
+            </children>
+        </HBox>
+    </top>
+
+    <!-- ЦЕНТРАЛЬНАЯ ЧАСТЬ -->
+    <center>
+        <StackPane fx:id="centerPane">
+
+            <!-- АРЕНДАТОРЫ -->
+            <VBox fx:id="tenantsPane" spacing="16" styleClass="center-pane" visible="true">
+                <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
+
+                <!-- ЗАГОЛОВОК -->
+                <Label text="Арендаторы" styleClass="page-title"/>
+
+                <HBox spacing="16">
+                    <TextField fx:id="searchField" promptText="Поиск..." HBox.hgrow="ALWAYS"/>
+                    <Button text="Добавить" onAction="#onAddTenant" styleClass="primary-button"/>
+                </HBox>
+
+                <SplitPane dividerPositions="0.35">
+
+                    <ListView fx:id="tenantListView" VBox.vgrow="ALWAYS"/>
+
+                    <AnchorPane styleClass="details-pane" VBox.vgrow="ALWAYS">
+                        <children>
+
+                            <Label fx:id="detailsPlaceholder"
+                                   text="Выберите арендатора"
+                                   styleClass="details-placeholder"
+                                   AnchorPane.leftAnchor="32" AnchorPane.topAnchor="32"/>
+
+                            <VBox fx:id="detailsBox" spacing="12" visible="false"
+                                  AnchorPane.leftAnchor="32" AnchorPane.topAnchor="32">
+
+                                <children>
+                                    <Label fx:id="lblTenantName" styleClass="details-title"/>
+
+                                    <Label fx:id="lblTenantPhone" styleClass="details-label" wrapText="true"/>
+                                    <Label fx:id="lblTenantEmail" styleClass="details-label" wrapText="true"/>
+                                    <Label fx:id="lblTenantNotes" styleClass="details-label" wrapText="true"/>
+
+                                    <HBox spacing="8">
+                                        <Button text="Редактировать" styleClass="edit-button" onAction="#onEditTenant"/>
+                                        <Button text="Удалить" styleClass="delete-button" onAction="#onDeleteTenant"/>
+                                    </HBox>
+                                </children>
+
+                            </VBox>
+                        </children>
+                    </AnchorPane>
+
+                </SplitPane>
+            </VBox>
+
+            <!-- АРЕНДОДАТЕЛИ -->
+            <VBox fx:id="landlordsPane" spacing="16" visible="false" styleClass="center-pane">
+                <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
+
+                <!-- ЗАГОЛОВОК -->
+                <Label text="Арендодатели" styleClass="page-title"/>
+
+                <HBox spacing="16">
+                    <TextField fx:id="searchFieldLandlords" promptText="Поиск..." HBox.hgrow="ALWAYS"/>
+                    <Button text="Добавить" onAction="#onAddLandlord" styleClass="primary-button"/>
+                </HBox>
+
+                <SplitPane dividerPositions="0.35">
+
+                    <ListView fx:id="landlordListView" VBox.vgrow="ALWAYS"/>
+
+                    <AnchorPane styleClass="details-pane" VBox.vgrow="ALWAYS">
+                        <children>
+
+                            <Label fx:id="detailsLandlordPlaceholder"
+                                   text="Выберите арендодателя"
+                                   styleClass="details-placeholder"
+                                   AnchorPane.leftAnchor="32" AnchorPane.topAnchor="32"/>
+
+                            <VBox fx:id="detailsLandlordBox" spacing="12" visible="false"
+                                  AnchorPane.leftAnchor="32" AnchorPane.topAnchor="32">
+
+                                <children>
+                                    <Label fx:id="lblLandlordName" styleClass="details-title"/>
+
+                                    <Label fx:id="lblLandlordPhone" styleClass="details-label" wrapText="true"/>
+                                    <Label fx:id="lblLandlordEmail" styleClass="details-label" wrapText="true"/>
+                                    <Label fx:id="lblLandlordNotes" styleClass="details-label" wrapText="true"/>
+
+                                    <HBox spacing="8">
+                                        <Button text="Редактировать" styleClass="edit-button" onAction="#onEditLandlord"/>
+                                        <Button text="Удалить" styleClass="delete-button" onAction="#onDeleteLandlord"/>
+                                    </HBox>
+
+                                </children>
+                            </VBox>
+
+                        </children>
+                    </AnchorPane>
+
+                </SplitPane>
+            </VBox>
+
+            <!-- ОБЪЕКТЫ -->
+            <VBox fx:id="propertiesPane" spacing="16" visible="false" styleClass="center-pane">
+                <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
+
+                <!-- ЗАГОЛОВОК -->
+                <Label text="Объекты" styleClass="page-title"/>
+
+                <HBox spacing="16">
+                    <TextField fx:id="searchFieldProperties" promptText="Поиск..." HBox.hgrow="ALWAYS"/>
+                    <Button text="Добавить" onAction="#onAddProperty" styleClass="primary-button"/>
+                </HBox>
+
+                <SplitPane dividerPositions="0.35">
+
+                    <ListView fx:id="propertyListView" VBox.vgrow="ALWAYS"/>
+
+                    <AnchorPane styleClass="details-pane" VBox.vgrow="ALWAYS">
+                        <children>
+
+                            <Label fx:id="detailsPropertyPlaceholder"
+                                   text="Выберите объект"
+                                   styleClass="details-placeholder"
+                                   AnchorPane.leftAnchor="32" AnchorPane.topAnchor="32"/>
+
+                            <VBox fx:id="detailsPropertyBox" spacing="12" visible="false"
+                                  AnchorPane.leftAnchor="32" AnchorPane.topAnchor="32">
+
+                                <children>
+
+                                    <Label fx:id="lblPropertyTitle" styleClass="details-title"/>
+
+                                    <Label fx:id="lblPropertyAddress" styleClass="details-label" wrapText="true"/>
+                                    <Label fx:id="lblPropertyArea" styleClass="details-label"/>
+                                    <Label fx:id="lblPropertyPrice" styleClass="details-label"/>
+                                    <Label fx:id="lblPropertyNotes" styleClass="details-label" wrapText="true"/>
+
+                                    <HBox spacing="8">
+                                        <Button text="Редактировать" styleClass="edit-button" onAction="#onEditProperty"/>
+                                        <Button text="Удалить" styleClass="delete-button" onAction="#onDeleteProperty"/>
+                                    </HBox>
+
+                                </children>
+                            </VBox>
+
+                        </children>
+                    </AnchorPane>
+
+                </SplitPane>
+            </VBox>
+
+            <!-- ДОГОВОРЫ -->
+            <VBox fx:id="contractsPane" spacing="16" visible="false" styleClass="center-pane">
+                <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
+
+                <!-- ЗАГОЛОВОК -->
+                <Label text="Договоры" styleClass="page-title"/>
+
+                <HBox spacing="16">
+                    <TextField fx:id="searchFieldContracts" promptText="Поиск..." HBox.hgrow="ALWAYS"/>
+                    <ComboBox fx:id="contractsFilterCombo" prefWidth="160"/>
+                    <Button text="Добавить" onAction="#onAddContract" styleClass="primary-button"/>
+                </HBox>
+
+                <SplitPane dividerPositions="0.40">
+
+                    <ListView fx:id="contractListView" VBox.vgrow="ALWAYS"/>
+
+                    <AnchorPane styleClass="details-pane" VBox.vgrow="ALWAYS">
+                        <children>
+
+                            <Label fx:id="detailsContractPlaceholder"
+                                   text="Выберите договор"
+                                   styleClass="details-placeholder"
+                                   AnchorPane.leftAnchor="32" AnchorPane.topAnchor="32"/>
+
+                            <VBox fx:id="detailsContractBox" spacing="12" visible="false"
+                                  AnchorPane.leftAnchor="32" AnchorPane.topAnchor="32">
+
+                                <children>
+
+                                    <Label fx:id="lblContractTenant" styleClass="details-title"/>
+
+                                    <Label fx:id="lblContractLandlord" styleClass="details-label" wrapText="true"/>
+                                    <Label fx:id="lblContractProperty" styleClass="details-label" wrapText="true"/>
+                                    <Label fx:id="lblContractPeriod" styleClass="details-label" wrapText="true"/>
+                                    <Label fx:id="lblContractRent" styleClass="details-label" wrapText="true"/>
+                                    <Label fx:id="lblContractStatus" styleClass="details-label" wrapText="true"/>
+
+                                    <HBox spacing="8">
+                                        <Button text="Редактировать" styleClass="edit-button" onAction="#onEditContract"/>
+                                        <Button text="Удалить" styleClass="delete-button" onAction="#onDeleteContract"/>
+                                    </HBox>
+
+                                </children>
+                            </VBox>
+
+                        </children>
+                    </AnchorPane>
+
+                </SplitPane>
+            </VBox>
+
+            <!-- ПЛАТЕЖИ -->
+            <VBox fx:id="paymentsPane" spacing="16" visible="false" styleClass="center-pane">
+                <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
+
+                <!-- ЗАГОЛОВОК -->
+                <Label text="Платежи" styleClass="page-title"/>
+
+                <HBox spacing="16">
+                    <TextField fx:id="searchFieldPayments" promptText="Поиск..." HBox.hgrow="ALWAYS"/>
+                    <Button text="Добавить" onAction="#onAddPayment" styleClass="primary-button"/>
+                </HBox>
+
+                <SplitPane dividerPositions="0.45">
+
+                    <ListView fx:id="paymentListView" VBox.vgrow="ALWAYS"/>
+
+                    <AnchorPane styleClass="details-pane" VBox.vgrow="ALWAYS">
+                        <children>
+
+                            <Label fx:id="detailsPaymentPlaceholder"
+                                   text="Выберите платёж"
+                                   styleClass="details-placeholder"
+                                   AnchorPane.leftAnchor="32" AnchorPane.topAnchor="32"/>
+
+                            <VBox fx:id="detailsPaymentBox" spacing="12" visible="false"
+                                  AnchorPane.leftAnchor="32" AnchorPane.topAnchor="32">
+
+                                <children>
+
+                                    <Label fx:id="lblPaymentDate" styleClass="details-title"/>
+
+                                    <Label fx:id="lblPaymentAmount" styleClass="details-label"/>
+                                    <Label fx:id="lblPaymentType" styleClass="details-label"/>
+                                    <Label fx:id="lblPaymentContract" styleClass="details-label" wrapText="true"/>
+                                    <Label fx:id="lblPaymentNotes" styleClass="details-label" wrapText="true"/>
+
+                                    <HBox spacing="8">
+                                        <Button text="Редактировать" styleClass="edit-button" onAction="#onEditPayment"/>
+                                        <Button text="Удалить" styleClass="delete-button" onAction="#onDeletePayment"/>
+                                    </HBox>
+
+                                </children>
+                            </VBox>
+
+                        </children>
+                    </AnchorPane>
+
+                </SplitPane>
+
+            </VBox>
+
+            <!-- РАСЧЁТ АРЕНДНЫХ ПЛАТЕЖЕЙ -->
+            <VBox fx:id="calculatorPane" spacing="18" visible="false" styleClass="center-pane">
+                <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
+
+                <children>
+
+                    <Label text="Расчёт арендных платежей" styleClass="page-title"/>
+
+                    <GridPane hgap="12" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="140"/>
+                            <ColumnConstraints hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <children>
+
+                            <Label text="Объект:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <ComboBox fx:id="calcPropertyBox"
+                                      promptText="Выберите объект"
+                                      GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                            <Label text="Дата начала:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <DatePicker fx:id="calcStartPicker"
+                                        GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                            <Label text="Дата окончания:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <DatePicker fx:id="calcEndPicker"
+                                        GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                            <Label text="Аренда / месяц:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                            <HBox spacing="8" GridPane.rowIndex="3" GridPane.columnIndex="1">
+
+                                <children>
+                                    <TextField fx:id="calcRentField"
+                                               promptText="Например: 60000"
+                                               HBox.hgrow="ALWAYS"/>
+
+                                    <Button text="Рассчитать"
+                                            onAction="#onCalculateSchedule"
+                                            styleClass="primary-button"/>
+                                </children>
+                            </HBox>
+
+                        </children>
+
+                    </GridPane>
+
+                    <!-- Красивый summary-блок -->
+                    <HBox spacing="32" styleClass="calc-summary-box">
+                        <children>
+                            <Label fx:id="lblCalcPeriod" text="Период: -" styleClass="calc-summary-label"/>
+                            <Label fx:id="lblCalcMonths" text="Месяцев: -" styleClass="calc-summary-label"/>
+                            <Label fx:id="lblCalcTotal" text="Итого: -" styleClass="calc-summary-label"/>
+                        </children>
+                    </HBox>
+
+                    <TableView fx:id="calcTable" styleClass="calc-table">
+                        <columns>
+                            <TableColumn fx:id="colCalcMonth" text="Месяц" prefWidth="140"/>
+                            <TableColumn fx:id="colCalcPeriod" text="Период" prefWidth="260"/>
+                            <TableColumn fx:id="colCalcDays" text="Дней" prefWidth="100"/>
+                            <TableColumn fx:id="colCalcAmount" text="Сумма" prefWidth="140"/>
+                        </columns>
+                    </TableView>
+
+                </children>
+
+            </VBox>
+
+        </StackPane>
+    </center>
+
+</BorderPane>

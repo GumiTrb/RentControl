@@ -1,0 +1,420 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam dpi 150
+skinparam defaultTextAlignment left
+
+title UML-диаграмма проекта RentControl
+
+' ================== ПАКЕТ: базовые классы ==================
+package "rentcontrol" {
+
+    abstract class BaseEntity {
+        - id : String
+        --
+        + BaseEntity()
+        + getId() : String
+        + setId(id : String) : void
+    }
+
+    class JsonStorage<T> {
+        - filePath : Path
+        - gson : Gson
+        - clazz : Class<T>
+        --
+        + JsonStorage(filePath : String, clazz : Class<T>)
+        + loadAll() : List<T>
+        + saveAll(data : List<T>) : void
+    }
+
+    class MainApp {
+        + start(stage : Stage) : void
+        + main(args : String[]) : void
+    }
+
+    class MainController {
+        ' --- сервисы ---
+        - tenantService : TenantService
+        - landlordService : LandlordService
+        - propertyService : PropertyService
+        - contractService : ContractService
+        - paymentService : PaymentService
+
+        ' --- основные UI-коллекции ---
+        - tenantObservableList : ObservableList<Tenant>
+        - landlordObservableList : ObservableList<Landlord>
+        - propertyObservableList : ObservableList<Property>
+        - contractObservableList : ObservableList<Contract>
+        - paymentObservableList : ObservableList<Payment>
+
+        --
+        + initialize() : void
+
+        ' навигация
+        - highlightMenu(id : String) : void
+        - setAllInvisible() : void
+        + openTenants() : void
+        + openLandlords() : void
+        + openProperties() : void
+        + openContracts() : void
+        + openPayments() : void
+        + openCalculator() : void
+
+        ' работа с арендаторами
+        - loadTenants() : void
+        - applyTenantSearch(query : String) : void
+        - showTenantDetails(t : Tenant) : void
+        - clearTenantDetails() : void
+        + onAddTenant() : void
+        + onEditTenant() : void
+        + onDeleteTenant() : void
+
+        ' работа с арендодателями
+        - loadLandlords() : void
+        - applyLandlordSearch(query : String) : void
+        - showLandlordDetails(l : Landlord) : void
+        - clearLandlordDetails() : void
+        + onAddLandlord() : void
+        + onEditLandlord() : void
+        + onDeleteLandlord() : void
+
+        ' работа с объектами
+        - loadProperties() : void
+        - applyPropertySearch(query : String) : void
+        - showPropertyDetails(p : Property) : void
+        - clearPropertyDetails() : void
+        + onAddProperty() : void
+        + onEditProperty() : void
+        + onDeleteProperty() : void
+
+        ' работа с договорами
+        - loadContracts() : void
+        - applyContractsFilter() : void
+        - showContractDetails(c : Contract) : void
+        - clearContractDetails() : void
+        + onAddContract() : void
+        + onEditContract() : void
+        + onDeleteContract() : void
+
+        ' работа с платежами
+        - loadPayments() : void
+        - applyPaymentSearch(query : String) : void
+        - showPaymentDetails(p : Payment) : void
+        - clearPaymentDetails() : void
+        + onAddPayment() : void
+        + onEditPayment() : void
+        + onDeletePayment() : void
+
+        ' калькулятор
+        + onCalculateSchedule() : void
+
+        ' диалоги
+        - createTenantDialog(title : String, existing : Tenant) : Dialog<Tenant>
+        - createLandlordDialog(title : String, existing : Landlord) : Dialog<Landlord>
+        - createPropertyDialog(title : String, existing : Property) : Dialog<Property>
+        - createContractDialog(title : String, existing : Contract) : Dialog<Contract>
+        - createPaymentDialog(title : String, existing : Payment) : Dialog<Payment>
+
+        ' сообщения и ошибки
+        - showWarning(msg : String) : void
+        - showError(msg : String) : void
+        - handleException(e : Exception) : void
+    }
+
+    ' Вложенный вспомогательный класс из калькулятора
+    class ScheduleRow {
+        - month : SimpleStringProperty
+        - period : SimpleStringProperty
+        - days : SimpleStringProperty
+        - amount : SimpleStringProperty
+        --
+        + ScheduleRow(month : String, period : String, days : String, amount : String)
+        + getMonth() : String
+        + getPeriod() : String
+        + getDays() : String
+        + getAmount() : String
+    }
+}
+
+' ================== ПАКЕТ: исключения ==================
+package "rentcontrol.exceptions" {
+
+    class ValidationException extends RuntimeException {
+        + ValidationException(message : String)
+    }
+
+    class StorageException extends RuntimeException {
+        + StorageException(message : String)
+        + StorageException(message : String, cause : Throwable)
+    }
+
+    class EntityNotFoundException extends RuntimeException {
+        + EntityNotFoundException(message : String)
+    }
+}
+
+' ================== ПАКЕТ: арендаторы ==================
+package "rentcontrol.tenants" {
+
+    class Tenant extends BaseEntity {
+        - fullName : String
+        - phone : String
+        - email : String
+        - notes : String
+        --
+        + Tenant()
+        + Tenant(fullName : String, phone : String, email : String, notes : String)
+        + getFullName() : String
+        + setFullName(v : String) : void
+        + getPhone() : String
+        + setPhone(v : String) : void
+        + getEmail() : String
+        + setEmail(v : String) : void
+        + getNotes() : String
+        + setNotes(v : String) : void
+        + toString() : String
+    }
+
+    class TenantService {
+        - storage : JsonStorage<Tenant>
+        - tenants : List<Tenant>
+        --
+        + TenantService(contractService : ContractService)
+        + getAll() : List<Tenant>
+        + search(query : String) : List<Tenant>
+        + addTenant(fullName : String, phone : String, email : String, notes : String) : Tenant
+        + updateTenant(tenant : Tenant, fullName : String, phone : String, email : String, notes : String) : void
+        + deleteTenant(tenant : Tenant) : void
+    }
+}
+
+' ================== ПАКЕТ: арендодатели ==================
+package "rentcontrol.landlords" {
+
+    class Landlord extends BaseEntity {
+        - fullName : String
+        - phone : String
+        - email : String
+        - notes : String
+        --
+        + Landlord()
+        + Landlord(fullName : String, phone : String, email : String, notes : String)
+        + getFullName() : String
+        + setFullName(v : String) : void
+        + getPhone() : String
+        + setPhone(v : String) : void
+        + getEmail() : String
+        + setEmail(v : String) : void
+        + getNotes() : String
+        + setNotes(v : String) : void
+        + toString() : String
+    }
+
+    class LandlordService {
+        - storage : JsonStorage<Landlord>
+        - landlords : List<Landlord>
+        - contractService : ContractService
+        --
+        + LandlordService(contractService : ContractService)
+        + getAll() : List<Landlord>
+        + search(query : String) : List<Landlord>
+        + addLandlord(fullName : String, phone : String, email : String, notes : String) : Landlord
+        + updateLandlord(landlord : Landlord,
+                         fullName : String,
+                         phone : String,
+                         email : String,
+                         notes : String) : void
+        + deleteLandlord(landlord : Landlord) : void
+    }
+}
+
+' ================== ПАКЕТ: объекты недвижимости ==================
+package "rentcontrol.properties" {
+
+    class Property extends BaseEntity {
+        - title : String
+        - address : String
+        - area : double
+        - price : double
+        - notes : String
+        --
+        + Property()
+        + Property(title : String, address : String, area : double, price : double, notes : String)
+        + getTitle() : String
+        + setTitle(v : String) : void
+        + getAddress() : String
+        + setAddress(v : String) : void
+        + getArea() : double
+        + setArea(v : double) : void
+        + getPrice() : double
+        + setPrice(v : double) : void
+        + getNotes() : String
+        + setNotes(v : String) : void
+        + toString() : String
+    }
+
+    class PropertyService {
+        - storage : JsonStorage<Property>
+        - properties : List<Property>
+        - contractService : ContractService
+        --
+        + PropertyService(contractService : ContractService)
+        + getAll() : List<Property>
+        + search(query : String) : List<Property>
+        + add(title : String, addr : String, area : double, price : double, notes : String) : Property
+        + update(p : Property,
+                 title : String,
+                 addr : String,
+                 area : double,
+                 price : double,
+                 notes : String) : void
+        + delete(p : Property) : void
+    }
+}
+
+' ================== ПАКЕТ: договоры ==================
+package "rentcontrol.contracts" {
+
+    class Contract extends BaseEntity {
+        - tenant : Tenant
+        - landlord : Landlord
+        - property : Property
+        - startDate : LocalDate
+        - endDate : LocalDate
+        - monthlyRent : double
+        - status : String
+        --
+        + Contract()
+        + Contract(t : Tenant, l : Landlord, p : Property,
+                   start : LocalDate, end : LocalDate, rent : double)
+        + getTenant() : Tenant
+        + setTenant(t : Tenant) : void
+        + getLandlord() : Landlord
+        + setLandlord(l : Landlord) : void
+        + getProperty() : Property
+        + setProperty(p : Property) : void
+        + getStartDate() : LocalDate
+        + setStartDate(s : LocalDate) : void
+        + getEndDate() : LocalDate
+        + setEndDate(e : LocalDate) : void
+        + getMonthlyRent() : double
+        + setMonthlyRent(r : double) : void
+        + getStatus() : String
+        + setStatus(status : String) : void
+        + toString() : String
+    }
+
+    class ContractService {
+        - storage : JsonStorage<Contract>
+        - contracts : List<Contract>
+        --
+        + ContractService()
+        + getAll() : List<Contract>
+        + add(c : Contract) : Contract
+        + update(old : Contract, updated : Contract) : void
+        + delete(c : Contract) : void
+        - save() : void
+        + updateStatus(c : Contract) : void
+    }
+}
+
+' ================== ПАКЕТ: платежи ==================
+package "rentcontrol.payments" {
+
+    class Payment extends BaseEntity {
+        - contract : Contract
+        - date : LocalDate
+        - amount : double
+        - type : String
+        - notes : String
+        --
+        + Payment()
+        + Payment(contract : Contract,
+                  date : LocalDate,
+                  amount : double,
+                  type : String,
+                  notes : String)
+        + getContract() : Contract
+        + setContract(c : Contract) : void
+        + getDate() : LocalDate
+        + setDate(d : LocalDate) : void
+        + getAmount() : double
+        + setAmount(a : double) : void
+        + getType() : String
+        + setType(t : String) : void
+        + getNotes() : String
+        + setNotes(n : String) : void
+        + toString() : String
+    }
+
+    class PaymentService {
+        - storage : JsonStorage<Payment>
+        - payments : List<Payment>
+        --
+        + PaymentService()
+        + getAll() : List<Payment>
+        + add(contract : Contract,
+              date : LocalDate,
+              amount : double,
+              type : String,
+              notes : String) : Payment
+        + update(payment : Payment,
+                 contract : Contract,
+                 date : LocalDate,
+                 amount : double,
+                 type : String,
+                 notes : String) : void
+        + delete(payment : Payment) : void
+        + getByContract(contract : Contract) : List<Payment>
+        + search(query : String) : List<Payment>
+        + calculateBalance(contract : Contract) : double
+        - updateContractStatus(contract : Contract) : void
+        - save() : void
+    }
+}
+
+' ================== НАСЛЕДОВАНИЕ ==================
+BaseEntity <|-- Tenant
+BaseEntity <|-- Landlord
+BaseEntity <|-- Property
+BaseEntity <|-- Contract
+BaseEntity <|-- Payment
+
+RuntimeException <|-- ValidationException
+RuntimeException <|-- StorageException
+RuntimeException <|-- EntityNotFoundException
+
+' ================== СВЯЗИ МЕЖДУ МОДЕЛЯМИ ==================
+Tenant "1" <-- "0..*" Contract : tenant
+Landlord "1" <-- "0..*" Contract : landlord
+Property "1" <-- "0..*" Contract : property
+
+Contract "1" <-- "0..*" Payment : payments
+
+' ================== СЕРВИСЫ И ХРАНИЛИЩА ==================
+JsonStorage "1" o-- "1" TenantService
+JsonStorage "1" o-- "1" LandlordService
+JsonStorage "1" o-- "1" PropertyService
+JsonStorage "1" o-- "1" ContractService
+JsonStorage "1" o-- "1" PaymentService
+
+TenantService --> ContractService
+LandlordService --> ContractService
+PropertyService --> ContractService
+
+PaymentService --> Contract
+PaymentService --> ContractService
+
+' ================== КОНТРОЛЛЕР И ПРИЛОЖЕНИЕ ==================
+MainApp --> MainController : создаёт через FXML
+MainController --> TenantService
+MainController --> LandlordService
+MainController --> PropertyService
+MainController --> ContractService
+MainController --> PaymentService
+
+MainController --> ScheduleRow
+
+@enduml
+
