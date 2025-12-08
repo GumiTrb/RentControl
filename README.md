@@ -84,8 +84,7 @@ RentControl/
 │   ├── main-view.fxml             # Разметка основного окна
 │   └── styles.css                 # Оформление интерфейса
 ├── uml/
-│   ├── classes.puml               # UML-диаграмма классов
-│   └── architecture.puml          # Общая схема архитектуры
+│   ├── test.puml                  # UML-диаграмма классов       
 └── README.md                      # Описание проекта
 ```
 
