@@ -94,6 +94,8 @@ RentControl/
 Приложение реализует **трёхслойную архитектуру**, обеспечивая разделение ответственности и удобство сопровождения:
 
 ---
+<img width="1259" height="1062" alt="test-UML___RentControl" src="https://github.com/user-attachments/assets/d2d9d1bf-579e-414b-813d-ff6c76a51a15" />
+
 
 ### UI-слой (JavaFX)
 
